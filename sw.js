@@ -3,12 +3,12 @@ const STATIC_CACHE = 'dev-dollar-static-v1';
 const DYNAMIC_CACHE = 'dev-dollar-dynamic-v1';
 
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/logo.png',
-  '/icon-192.png',
-  '/icon-512.png'
+  './',
+  './index.html',
+  './manifest.json',
+  './logo.png',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 // Install event - cache static assets
@@ -53,19 +53,19 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Handle navigation requests
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      caches.match('/index.html')
-        .then((response) => {
-          return response || fetch(request);
-        })
-        .catch(() => {
-          return caches.match('/index.html');
-        })
-    );
-    return;
-  }
+  		// Handle navigation requests
+		if (request.mode === 'navigate') {
+			event.respondWith(
+				caches.match('./index.html')
+					.then((response) => {
+						return response || fetch(request);
+					})
+					.catch(() => {
+						return caches.match('./index.html');
+					})
+			);
+			return;
+		}
 
   // Handle static assets
   if (STATIC_ASSETS.includes(url.pathname)) {
@@ -142,24 +142,24 @@ async function clearOfflineDonations() {
 self.addEventListener('push', (event) => {
   const options = {
     body: event.data ? event.data.text() : 'New donation received!',
-    icon: '/icon-192.png',
-    badge: '/icon-192.png',
+    		icon: './icon-192.png',
+		badge: './icon-192.png',
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
       primaryKey: 1
     },
     actions: [
-      {
-        action: 'explore',
-        title: 'View Campaign',
-        icon: '/icon-192.png'
-      },
-      {
-        action: 'close',
-        title: 'Close',
-        icon: '/icon-192.png'
-      }
+      			{
+				action: 'explore',
+				title: 'View Campaign',
+				icon: './icon-192.png'
+			},
+			{
+				action: 'close',
+				title: 'Close',
+				icon: './icon-192.png'
+			}
     ]
   };
 

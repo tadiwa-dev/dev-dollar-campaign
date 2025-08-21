@@ -11,11 +11,11 @@
 	<meta name="apple-mobile-web-app-title" content="DevDollar" />
 	<meta name="mobile-web-app-capable" content="yes" />
 	<meta name="msapplication-TileColor" content="#22c55e" />
-	<meta name="msapplication-config" content="/browserconfig.xml" />
-	<link rel="manifest" href="/manifest.json" />
-	<link rel="apple-touch-icon" href="/icon-192.png" />
-	<link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png" />
-	<link rel="icon" type="image/png" sizes="16x16" href="/icon-16.png" />
+	<meta name="msapplication-config" content="./browserconfig.xml" />
+	<link rel="manifest" href="./manifest.json" />
+	<link rel="apple-touch-icon" href="./icon-192.png" />
+	<link rel="icon" type="image/png" sizes="32x32" href="./icon-32.png" />
+	<link rel="icon" type="image/png" sizes="16x16" href="./icon-16.png" />
 	<style>
 		:root {
 			--bg: #0f172a;             /* slate-900 */
@@ -591,7 +591,7 @@
 			// Register service worker for PWA functionality
 			if ('serviceWorker' in navigator) {
 				window.addEventListener('load', () => {
-					navigator.serviceWorker.register('/sw.js')
+					navigator.serviceWorker.register('./sw.js')
 						.then((registration) => {
 							console.log('SW registered: ', registration);
 							
@@ -689,20 +689,20 @@
 				if (Notification.permission === 'granted') {
 					const notification = new Notification('Development Dollar Campaign', {
 						body: '💝 Time for your monthly donation! A dollar a month builds together.',
-						icon: '/icon-192.png',
-						badge: '/icon-192.png',
+						icon: './icon-192.png',
+						badge: './icon-192.png',
 						tag: 'monthly-reminder',
 						requireInteraction: true,
 						actions: [
 							{
 								action: 'give',
 								title: 'Give Now',
-								icon: '/icon-192.png'
+								icon: './icon-192.png'
 							},
 							{
 								action: 'later',
 								title: 'Remind Later',
-								icon: '/icon-192.png'
+								icon: './icon-192.png'
 							}
 						]
 					});
