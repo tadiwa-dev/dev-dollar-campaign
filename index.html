@@ -250,7 +250,7 @@
 		html[data-theme="light"] .ussd-preview { background: rgba(15,23,42,.04); border-color: rgba(15,23,42,.12); }
 
 		/* Theme toggle */
-		.header-actions { display: flex; justify-content: flex-end; }
+		.header-actions { display: flex; justify-content: flex-end; gap: 8px; }
 		.theme-toggle {
 			display: inline-flex; align-items: center; gap: 8px;
 			padding: 8px 12px; font-size: 13px; border-radius: 999px;
@@ -259,12 +259,28 @@
 			color: var(--text); cursor: pointer; user-select: none;
 		}
 		html[data-theme="light"] .theme-toggle { border-color: rgba(15,23,42,.12); background: rgba(15,23,42,.04); }
+		
+		/* Footer */
+		.footer {
+			margin-top: 32px;
+			padding: 20px 0;
+			text-align: center;
+			border-top: 1px solid rgba(148,163,184,.15);
+		}
+		.footer-text {
+			margin: 0;
+			font-size: 14px;
+			color: var(--muted);
+			font-weight: 500;
+		}
+		html[data-theme="light"] .footer { border-top-color: rgba(15,23,42,.12); }
 	</style>
 </head>
 <body>
 	<div class="container">
 		<header class="header">
 			<div class="header-actions">
+				<button id="reminderBtn" class="theme-toggle" type="button" aria-label="Test reminder" title="Test monthly reminder">🔔</button>
 				<button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle theme">Dark mode</button>
 			</div>
 			<div class="brand">
@@ -318,6 +334,10 @@
 		</section>
 
 		<p class="footer-note">Data is stored locally on your device and persists after refresh.</p>
+		
+		<footer class="footer">
+			<p class="footer-text">Made By Tadiwa Matewe</p>
+		</footer>
 	</div>
 
 	<script>
@@ -335,6 +355,7 @@
 			const emptyEl = document.getElementById('empty');
 			const ussdPreviewEl = document.getElementById('ussdPreview');
 			const themeToggleBtn = document.getElementById('themeToggle');
+			const reminderBtn = document.getElementById('reminderBtn');
 
 			function updateThemeToggleLabel(theme) {
 				if (!themeToggleBtn) return;
@@ -490,6 +511,11 @@
 			}
 
 			// Events
+			if (reminderBtn) {
+				reminderBtn.addEventListener('click', function () {
+					showMonthlyReminder();
+				});
+			}
 			if (themeToggleBtn) {
 				themeToggleBtn.addEventListener('click', function () {
 					const current = (document.documentElement.getAttribute('data-theme') === 'light') ? 'light' : 'dark';
@@ -534,11 +560,95 @@
 							if ('Notification' in window && Notification.permission === 'default') {
 								Notification.requestPermission();
 							}
+							
+							// Setup monthly donation reminders
+							setupMonthlyReminders();
 						})
 						.catch((registrationError) => {
 							console.log('SW registration failed: ', registrationError);
 						});
 				});
+			}
+			
+			// Monthly donation reminder functionality
+			function setupMonthlyReminders() {
+				const REMINDER_KEY = 'ddc_monthly_reminder';
+				const lastReminder = localStorage.getItem(REMINDER_KEY);
+				const now = new Date();
+				const currentMonth = now.getFullYear() * 100 + now.getMonth();
+				
+				if (!lastReminder || parseInt(lastReminder) < currentMonth) {
+					// Schedule reminder for this month
+					scheduleMonthlyReminder();
+					localStorage.setItem(REMINDER_KEY, currentMonth.toString());
+				}
+			}
+			
+			function scheduleMonthlyReminder() {
+				// Check if notifications are supported and permitted
+				if (!('Notification' in window) || Notification.permission !== 'granted') {
+					return;
+				}
+				
+				// Schedule reminder for 3 days from now (or adjust as needed)
+				const reminderDate = new Date();
+				reminderDate.setDate(reminderDate.getDate() + 3);
+				
+				// Store the reminder time
+				localStorage.setItem('ddc_reminder_time', reminderDate.getTime().toString());
+				
+				// Set up the reminder
+				setTimeout(() => {
+					showMonthlyReminder();
+				}, reminderDate.getTime() - Date.now());
+			}
+			
+			function showMonthlyReminder() {
+				if (Notification.permission === 'granted') {
+					const notification = new Notification('Development Dollar Campaign', {
+						body: '💝 Time for your monthly donation! A dollar a month builds together.',
+						icon: '/icon-192.png',
+						badge: '/icon-192.png',
+						tag: 'monthly-reminder',
+						requireInteraction: true,
+						actions: [
+							{
+								action: 'give',
+								title: 'Give Now',
+								icon: '/icon-192.png'
+							},
+							{
+								action: 'later',
+								title: 'Remind Later',
+								icon: '/icon-192.png'
+							}
+						]
+					});
+					
+					// Handle notification actions
+					notification.onclick = function() {
+						window.focus();
+						notification.close();
+					};
+					
+					notification.onactionclick = function(event) {
+						if (event.action === 'give') {
+							window.focus();
+							amountInput.focus();
+						} else if (event.action === 'later') {
+							// Reschedule for next week
+							setTimeout(() => {
+								showMonthlyReminder();
+							}, 7 * 24 * 60 * 60 * 1000); // 1 week
+						}
+						notification.close();
+					};
+					
+					// Auto-close after 30 seconds
+					setTimeout(() => {
+						notification.close();
+					}, 30000);
+				}
 			}
 			
 			// Handle install prompt
