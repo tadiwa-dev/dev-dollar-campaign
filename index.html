@@ -1,161 +1,439 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-  <title>Development Dollar Campaign</title>
-  <meta name="color-scheme" content="light dark"/>
-  <style>
-    :root { --bg: #0f172a; --card: #111827; --text: #e5e7eb; --muted: #94a3b8; --primary: #22c55e; --primary-600: #16a34a; --danger: #ef4444; }
-    *{box-sizing:border-box} html,body{height:100%}
-    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-         background:radial-gradient(1200px 600px at 50% -10%, #123 0%, var(--bg) 55%) fixed;
-         color:var(--text);}
-.container{max-width:720px;margin:0 auto;padding:20px clamp(16px,4vw,28px);}
-.header{text-align:center;margin:28px 0 18px;}
-.title{font-size:clamp(22px,5.8vw,34px);font-weight:800;letter-spacing:-.02em;margin:0 0 6px;text-shadow:0 2px 16px rgba(34,197,94,.15);}
-.subtitle{margin:0;font-size:clamp(13px,3.4vw,16px);color:var(--muted);font-style:italic;}
-.card{background:linear-gradient(180deg,var(--card) 0%, #0b1225 100%);border:1px solid rgba(255,255,255,.06);border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,.35);padding:clamp(16px,4.5vw,22px);}
-.card + .card{margin-top:16px}
-.badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);background:rgba(148,163,184,.06);border:1px solid rgba(148,163,184,.18);border-radius:999px;padding:6px 12px;margin-bottom:12px;}
-.input-row{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px}
-@media (min-width:420px){.input-row{grid-template-columns:1fr auto;align-items:end}}
-label{display:block;font-size:13px;color:var(--muted);margin-bottom:8px}
-.input-wrap{display:grid;gap:8px}
-.input{width:100%;appearance:textfield;background:rgba(2,6,23,.35);color:var(--text);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;font-size:16px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s}
-.input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(34,197,94,.35);background:rgba(2,6,23,.5)}
-.input::-webkit-outer-spin-button,.input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.helper{font-size:12px;color:var(--muted);margin-top:-2px}
-.error{font-size:13px;color:var(--danger);min-height:18px}
-.button{display:inline-flex;justify-content:center;align-items:center;gap:10px;padding:14px 18px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,var(--primary) 0%, var(--primary-600) 100%);color:#fff;font-weight:700;font-size:16px;cursor:pointer;text-decoration:none;user-select:none;transition:transform .05s,filter .15s,opacity .15s;box-shadow:0 8px 20px rgba(34,197,94,.25);min-width:160px}
-.button:active{transform:translateY(1px)}
-.button[disabled]{opacity:.6;cursor:not-allowed;filter:grayscale(.2)}
-.button-secondary{background:transparent;border-color:rgba(148,163,184,.22);color:var(--text);box-shadow:none}
-.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.total{font-weight:800;font-size:clamp(18px,4.6vw,22px);letter-spacing:-.02em}
-.list{margin-top:12px;display:grid;gap:10px}
-.item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:12px;background:rgba(2,6,23,.35);border:1px solid rgba(255,255,255,.08)}
-.item-left{display:grid;gap:2px}
-.date{color:var(--muted);font-size:12px}
-.amount{font-weight:700}
-.empty{text-align:center;color:var(--muted);font-size:14px;padding:16px;border:1px dashed rgba(148,163,184,.25);border-radius:12px;background:rgba(148,163,184,.04)}
-.footer-note{margin-top:12px;font-size:12px;color:var(--muted);text-align:center}
-.ussd-preview{margin-top:10px;font-size:13px;color:var(--muted);background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.2);border-radius:10px;padding:8px 10px}
-  </style>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+	<title>Development Dollar Campaign</title>
+	<meta name="color-scheme" content="light dark" />
+	<style>
+		:root {
+			--bg: #0f172a;             /* slate-900 */
+			--card: #111827;           /* gray-900 */
+			--card-2: #0b1225;         /* deeper */
+			--text: #e5e7eb;           /* gray-200 */
+			--muted: #94a3b8;          /* slate-400 */
+			--primary: #22c55e;        /* green-500 */
+			--primary-600: #16a34a;    /* green-600 */
+			--danger: #ef4444;         /* red-500 */
+			--ring: rgba(34, 197, 94, 0.35);
+			--shadow: 0 10px 25px rgba(0,0,0,.35);
+			--radius: 16px;
+		}
+		* { box-sizing: border-box; }
+		html, body { height: 100%; }
+		body {
+			margin: 0;
+			font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+			background: radial-gradient(1200px 600px at 50% -10%, #123 0%, var(--bg) 55%) fixed;
+			color: var(--text);
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+		}
+		.container {
+			max-width: 720px;
+			margin: 0 auto;
+			padding: 20px clamp(16px, 4vw, 28px);
+		}
+		.header {
+			text-align: center;
+			margin: 28px 0 18px;
+		}
+		.title {
+			font-size: clamp(22px, 5.8vw, 34px);
+			font-weight: 800;
+			letter-spacing: -0.02em;
+			margin: 0 0 6px;
+			text-shadow: 0 2px 16px rgba(34,197,94,.15);
+		}
+		.subtitle {
+			margin: 0;
+			font-size: clamp(13px, 3.4vw, 16px);
+			color: var(--muted);
+			font-style: italic;
+		}
+		.card {
+			background: linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%);
+			border: 1px solid rgba(255,255,255,.06);
+			border-radius: var(--radius);
+			box-shadow: var(--shadow);
+			padding: clamp(16px, 4.5vw, 22px);
+		}
+		.card + .card { margin-top: 16px; }
+		.badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 13px;
+			color: var(--muted);
+			background: rgba(148,163,184,.06);
+			border: 1px solid rgba(148,163,184,.18);
+			border-radius: 999px;
+			padding: 6px 12px;
+			margin-bottom: 12px;
+		}
+		.input-row {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 10px;
+			margin-top: 8px;
+		}
+		@media (min-width: 420px) {
+			.input-row {
+				grid-template-columns: 1fr auto;
+				align-items: end;
+			}
+		}
+		label {
+			display: block;
+			font-size: 13px;
+			color: var(--muted);
+			margin-bottom: 8px;
+		}
+		.input-wrap {
+			display: grid;
+			gap: 8px;
+		}
+		.input {
+			width: 100%;
+			appearance: textfield;
+			background: rgba(2,6,23,.35);
+			color: var(--text);
+			border: 1px solid rgba(255,255,255,.08);
+			border-radius: 12px;
+			padding: 14px 14px;
+			font-size: 16px;
+			outline: none;
+			transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+		}
+		.input:focus {
+			border-color: var(--primary);
+			box-shadow: 0 0 0 4px var(--ring);
+			background: rgba(2,6,23,.5);
+		}
+		.input::-webkit-outer-spin-button,
+		.input::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+		.helper {
+			font-size: 12px;
+			color: var(--muted);
+			margin-top: -2px;
+		}
+		.error {
+			font-size: 13px;
+			color: var(--danger);
+			min-height: 18px;
+		}
+		.button {
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
+			gap: 10px;
+			padding: 14px 18px;
+			border-radius: 12px;
+			border: 1px solid rgba(255,255,255,.12);
+			background: linear-gradient(180deg, var(--primary) 0%, var(--primary-600) 100%);
+			color: white;
+			font-weight: 700;
+			font-size: 16px;
+			cursor: pointer;
+			text-decoration: none;
+			user-select: none;
+			transition: transform .05s ease, filter .15s ease, opacity .15s ease;
+			box-shadow: 0 8px 20px rgba(34,197,94,.25);
+			min-width: 160px;
+		}
+		.button:active { transform: translateY(1px); }
+		.button[disabled] {
+			opacity: .6;
+			cursor: not-allowed;
+			filter: grayscale(.2);
+		}
+		.button-secondary {
+			background: transparent;
+			border-color: rgba(148,163,184,.22);
+			color: var(--text);
+			box-shadow: none;
+		}
+		.row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+		.total {
+			font-weight: 800;
+			font-size: clamp(18px, 4.6vw, 22px);
+			letter-spacing: -0.02em;
+		}
+		.list {
+			margin-top: 12px;
+			display: grid;
+			gap: 10px;
+		}
+		.item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 10px;
+			padding: 12px 14px;
+			border-radius: 12px;
+			background: rgba(2,6,23,.35);
+			border: 1px solid rgba(255,255,255,.08);
+		}
+		.item-left {
+			display: grid;
+			gap: 2px;
+		}
+		.date { color: var(--muted); font-size: 12px; }
+		.amount { font-weight: 700; }
+		.empty {
+			text-align: center;
+			color: var(--muted);
+			font-size: 14px;
+			padding: 16px;
+			border: 1px dashed rgba(148,163,184,.25);
+			border-radius: 12px;
+			background: rgba(148,163,184,.04);
+		}
+		.footer-note {
+			margin-top: 12px;
+			font-size: 12px;
+			color: var(--muted);
+			text-align: center;
+		}
+		.ussd-preview {
+			margin-top: 10px;
+			font-size: 13px;
+			color: var(--muted);
+			background: rgba(148,163,184,.08);
+			border: 1px solid rgba(148,163,184,.2);
+			border-radius: 10px;
+			padding: 8px 10px;
+		}
+	</style>
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <h1 class="title">Development Dollar Campaign</h1>
-      <p class="subtitle">“A Dollar a Month – Built Together, Blessed Together”</p>
-    </header>
-    <section class="card" aria-labelledby="give-title">
-      <div class="badge" aria-hidden="true">
-        <span>EcoCash USSD • Biller Code</span>
-        <strong>222742</strong>
-      </div>
-      <h2 id="give-title" style="margin:0 0 10px;font-size:18px">Give a Gift</h2>
-      <p class="helper">Enter any USD amount. Suggested: $1 or more monthly.</p>
-      <div class="input-row">
-        <div class="input-wrap">
-          <label for="amount">Amount (USD)</label>
-          <input id="amount" class="input" inputmode="decimal" type="number" step="0.01" min="0.01" placeholder="1.00" aria-describedby="amount-error"/>
-          <div id="amount-error" class="error" role="alert" aria-live="polite"></div>
-        </div>
-        <div style="display:grid;gap:8px">
-          <label style="visibility:hidden">Give Now</label>
-          <button id="giveBtn" class="button" type="button"><span>Give Now</span></button>
-        </div>
-      </div>
-      <div class="ussd-preview" id="ussdPreview" aria-live="polite" style="display:none"></div>
-      <p class="footer-note">Press “Give Now” to open your phone dialer and confirm the USSD payment.</p>
-    </section>
-    <section class="card" aria-labelledby="history-title">
-      <div class="row">
-        <h2 id="history-title" style="margin:0;font-size:18px">Giving History</h2>
-        <button id="clearBtn" class="button button-secondary" type="button" title="Clear local history">Clear History</button>
-      </div>
-      <div class="row" style="margin-top:8px">
-        <div class="total">Total Given: <span id="total">$0.00</span></div>
-      </div>
-      <div id="list" class="list" role="list" style="margin-top:12px"></div>
-      <div id="empty" class="empty" style="display:none">No donations yet. Your gifts will appear here.</div>
-    </section>
-    <p class="footer-note">Data is stored locally on your device and persists after refresh.</p>
-  </div>
-  <script>
-    (function(){
-      const STORAGE_KEY = "ddc_donations";
-      const BILLER_CODE = "222742";
-      const amountInput = document.getElementById("amount");
-      const giveBtn = document.getElementById("giveBtn");
-      const clearBtn = document.getElementById("clearBtn");
-      const errorBox = document.getElementById("amount-error");
-      const totalEl = document.getElementById("total");
-      const listEl = document.getElementById("list");
-      const emptyEl = document.getElementById("empty");
-      const ussdPreviewEl = document.getElementById("ussdPreview");
-      function loadDonations(){
-        try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; }
-      }
-      function saveDonations(items){ localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
-      function addDonation(amountNumber){
-        const items = loadDonations();
-        items.push({ amount: Number(amountNumber.toFixed(2)), date: new Date().toISOString() });
-        saveDonations(items);
-        render();
-      }
-      function clearHistory(){ localStorage.removeItem(STORAGE_KEY); render(); }
-      function formatCurrency(value){
-        try{ return new Intl.NumberFormat("en-US", {style:"currency", currency:"USD", minimumFractionDigits:2}).format(value); }
-        catch(e){ return "$" + value.toFixed(2); }
-      }
-      function formatDate(iso){
-        try{ const d=new Date(iso); return d.toLocaleString([], {year:"numeric", month:"short", day:"2-digit", hour:"2-digit", minute:"2-digit"}); }
-        catch(e){ return iso; }
-      }
-      function computeTotal(items){ return items.reduce((sum,it)=> sum + (Number(it.amount)||0), 0); }
-      function sanitizeAmountInput(value){ const num = Number(value); if(!isFinite(num) || num <= 0) return null; return Math.round(num*100)/100; }
-      function toUssdAmount(amountNumber){ if(Number.isInteger(amountNumber)) return String(amountNumber); const fixed = amountNumber.toFixed(2); return fixed.replace(/\.00$/, "").replace(/(\.\d)0$/, "$1"); }
-      function buildUssd(amountNumber){ const amt = toUssdAmount(amountNumber); return `*151*${BILLER_CODE}*${amt}#`; }
-      function buildTelUri(ussd){ return "tel:" + ussd.replace(/#/g, "%23"); }
-      function validate(){
-        const value = amountInput.value.trim();
-        const n = sanitizeAmountInput(value);
-        let ok = true;
-        if(value === "" || n === null){ errorBox.textContent = "Please enter an amount greater than 0."; ok = false; } else { errorBox.textContent = ""; }
-        giveBtn.disabled = !ok;
-        if(ok){ const ussd = buildUssd(n); ussdPreviewEl.style.display = ""; ussdPreviewEl.textContent = "USSD to dial: " + ussd; } else { ussdPreviewEl.style.display = "none"; ussdPreviewEl.textContent = ""; }
-        return ok ? n : null;
-      }
-      function render(){
-        const items = loadDonations().slice().reverse();
-        const total = computeTotal(items);
-        totalEl.textContent = formatCurrency(total);
-        listEl.innerHTML = "";
-        if(items.length === 0){ emptyEl.style.display = ""; return; }
-        emptyEl.style.display = "none";
-        for(const it of items){
-          const row = document.createElement("div"); row.className = "item"; row.setAttribute("role","listitem");
-          const left = document.createElement("div"); left.className = "item-left";
-          const amt = document.createElement("div"); amt.className = "amount"; amt.textContent = formatCurrency(Number(it.amount)||0);
-          const date = document.createElement("div"); date.className = "date"; date.textContent = formatDate(it.date);
-          left.appendChild(amt); left.appendChild(date);
-          row.appendChild(left);
-          listEl.appendChild(row);
-        }
-      }
-      amountInput.addEventListener("input", validate);
-      giveBtn.addEventListener("click", function(){
-        const amountNumber = validate(); if(amountNumber === null) return;
-        const ussd = buildUssd(amountNumber); const telUri = buildTelUri(ussd);
-        addDonation(amountNumber);
-        window.location.href = telUri;
-      });
-      clearBtn.addEventListener("click", function(){ if(confirm("Clear your local giving history?")){ clearHistory(); } });
-      render();
-      validate();
-    })();
-  </script>
+	<div class="container">
+		<header class="header">
+			<h1 class="title">Development Dollar Campaign</h1>
+			<p class="subtitle">“A Dollar a Month – Built Together, Blessed Together”</p>
+		</header>
+
+		<section class="card" aria-labelledby="give-title">
+			<div class="badge" aria-hidden="true">
+				<span>EcoCash USSD • Biller Code</span>
+				<strong>222742</strong>
+			</div>
+
+			<h2 id="give-title" style="margin: 0 0 10px; font-size: 18px;">Give a Gift</h2>
+			<p class="helper">Enter any USD amount. Suggested: $1 or more monthly.</p>
+
+			<div class="input-row">
+				<div class="input-wrap">
+					<label for="amount">Amount (USD)</label>
+					<input id="amount" class="input" inputmode="decimal" type="number" step="0.01" min="0.01" placeholder="1.00" aria-describedby="amount-help amount-error" />
+					<div id="amount-error" class="error" role="alert" aria-live="polite"></div>
+				</div>
+
+				<div style="display: grid; gap: 8px;">
+					<label style="visibility: hidden;">Give Now</label>
+					<button id="giveBtn" class="button" type="button">
+						<span>Give Now</span>
+					</button>
+				</div>
+			</div>
+
+			<div class="ussd-preview" id="ussdPreview" aria-live="polite" style="display:none;"></div>
+
+			<p class="footer-note">Press “Give Now” to open your phone's dialer and confirm the USSD payment.</p>
+		</section>
+
+		<section class="card" aria-labelledby="history-title">
+			<div class="row">
+				<h2 id="history-title" style="margin: 0; font-size: 18px;">Giving History</h2>
+				<button id="clearBtn" class="button button-secondary" type="button" title="Clear local history">Clear History</button>
+			</div>
+
+			<div class="row" style="margin-top: 8px;">
+				<div class="total">Total Given: <span id="total">$0.00</span></div>
+			</div>
+
+			<div id="list" class="list" role="list" style="margin-top: 12px;"></div>
+			<div id="empty" class="empty" style="display:none;">No donations yet. Your gifts will appear here.</div>
+		</section>
+
+		<p class="footer-note">Data is stored locally on your device and persists after refresh.</p>
+	</div>
+
+	<script>
+		(function () {
+			const STORAGE_KEY = 'ddc_donations';
+			const BILLER_CODE = '222742';
+
+			const amountInput = document.getElementById('amount');
+			const giveBtn = document.getElementById('giveBtn');
+			const clearBtn = document.getElementById('clearBtn');
+			const errorBox = document.getElementById('amount-error');
+			const totalEl = document.getElementById('total');
+			const listEl = document.getElementById('list');
+			const emptyEl = document.getElementById('empty');
+			const ussdPreviewEl = document.getElementById('ussdPreview');
+
+			function loadDonations() {
+				try {
+					const raw = localStorage.getItem(STORAGE_KEY);
+					return raw ? JSON.parse(raw) : [];
+				} catch {
+					return [];
+				}
+			}
+
+			function saveDonations(items) {
+				localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+			}
+
+			function addDonation(amountNumber) {
+				const items = loadDonations();
+				items.push({
+					amount: Number(amountNumber.toFixed(2)),
+					date: new Date().toISOString()
+				});
+				saveDonations(items);
+				render();
+			}
+
+			function clearHistory() {
+				localStorage.removeItem(STORAGE_KEY);
+				render();
+			}
+
+			function formatCurrency(value) {
+				try {
+					return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(value);
+				} catch {
+					return '$' + value.toFixed(2);
+				}
+			}
+
+			function formatDate(iso) {
+				try {
+					const d = new Date(iso);
+					return d.toLocaleString([], { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+				} catch {
+					return iso;
+				}
+			}
+
+			function computeTotal(items) {
+				return items.reduce((sum, it) => sum + (Number(it.amount) || 0), 0);
+			}
+
+			function sanitizeAmountInput(value) {
+				const num = Number(value);
+				if (!isFinite(num) || num <= 0) return null;
+				return Math.round(num * 100) / 100;
+			}
+
+			function toUssdAmount(amountNumber) {
+				// Prefer integers for USSD when possible; otherwise keep 2 decimals without trailing zeros
+				if (Number.isInteger(amountNumber)) return String(amountNumber);
+				const fixed = amountNumber.toFixed(2);
+				return fixed.replace(/\.00$/, '').replace(/(\.\d)0$/, '$1');
+			}
+
+			function buildUssd(amountNumber) {
+				const amt = toUssdAmount(amountNumber);
+				return `*151*2*2*${BILLER_CODE}*${amt}#`;
+			}
+
+			function buildTelUri(ussd) {
+				// Encode only the hash for tel: URIs
+				return 'tel:' + ussd.replace(/#/g, '%23');
+			}
+
+			function validate() {
+				const value = amountInput.value.trim();
+				const n = sanitizeAmountInput(value);
+				let ok = true;
+				if (value === '' || n === null) {
+					errorBox.textContent = 'Please enter an amount greater than 0.';
+					ok = false;
+				} else {
+					errorBox.textContent = '';
+				}
+				giveBtn.disabled = !ok;
+				// Live USSD preview
+				if (ok) {
+					const ussd = buildUssd(n);
+					ussdPreviewEl.style.display = '';
+					ussdPreviewEl.textContent = `USSD to dial: ${ussd}`;
+				} else {
+					ussdPreviewEl.style.display = 'none';
+					ussdPreviewEl.textContent = '';
+				}
+				return ok ? n : null;
+			}
+
+			function render() {
+				const items = loadDonations().slice().reverse();
+				const total = computeTotal(items);
+				totalEl.textContent = formatCurrency(total);
+
+				listEl.innerHTML = '';
+				if (items.length === 0) {
+					emptyEl.style.display = '';
+					return;
+				}
+				emptyEl.style.display = 'none';
+
+				for (const it of items) {
+					const row = document.createElement('div');
+					row.className = 'item';
+					row.setAttribute('role', 'listitem');
+
+					const left = document.createElement('div');
+					left.className = 'item-left';
+
+					const amt = document.createElement('div');
+					amt.className = 'amount';
+					amt.textContent = formatCurrency(Number(it.amount) || 0);
+
+					const date = document.createElement('div');
+					date.className = 'date';
+					date.textContent = formatDate(it.date);
+
+					left.appendChild(amt);
+					left.appendChild(date);
+
+					row.appendChild(left);
+					listEl.appendChild(row);
+				}
+			}
+
+			// Events
+			amountInput.addEventListener('input', validate);
+			giveBtn.addEventListener('click', function () {
+				const amountNumber = validate();
+				if (amountNumber === null) return;
+
+				// Build USSD and navigate to dialer
+				const ussd = buildUssd(amountNumber);
+				const telUri = buildTelUri(ussd);
+
+				// Save donation locally first (so it persists even if navigation occurs)
+				addDonation(amountNumber);
+
+				// Trigger dialer
+				window.location.href = telUri;
+			});
+
+			clearBtn.addEventListener('click', function () {
+				if (confirm('Clear your local giving history?')) {
+					clearHistory();
+				}
+			});
+
+			// Init
+			render();
+			validate();
+		})();
+	</script>
 </body>
 </html>
