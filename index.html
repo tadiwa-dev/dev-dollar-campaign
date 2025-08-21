@@ -335,6 +335,15 @@
 
 		<p class="footer-note">Data is stored locally on your device and persists after refresh.</p>
 		
+		<div class="install-section" id="installSection" style="display: none;">
+			<button id="manualInstallBtn" class="button" style="width: 100%; margin-top: 16px;">
+				📱 Install as App
+			</button>
+			<p class="helper" style="text-align: center; margin-top: 8px;">
+				Install this app on your device for the best experience
+			</p>
+		</div>
+		
 		<footer class="footer">
 			<p class="footer-text">Made By Tadiwa Matewe</p>
 		</footer>
@@ -356,6 +365,8 @@
 			const ussdPreviewEl = document.getElementById('ussdPreview');
 			const themeToggleBtn = document.getElementById('themeToggle');
 			const reminderBtn = document.getElementById('reminderBtn');
+			const installSection = document.getElementById('installSection');
+			const manualInstallBtn = document.getElementById('manualInstallBtn');
 
 			function updateThemeToggleLabel(theme) {
 				if (!themeToggleBtn) return;
@@ -516,6 +527,26 @@
 					showMonthlyReminder();
 				});
 			}
+			if (manualInstallBtn) {
+				manualInstallBtn.addEventListener('click', function () {
+					// Try to trigger install prompt
+					if (deferredPrompt) {
+						deferredPrompt.prompt();
+						deferredPrompt.userChoice.then((choiceResult) => {
+							if (choiceResult.outcome === 'accepted') {
+								console.log('User accepted the install prompt');
+								installSection.style.display = 'none';
+							} else {
+								console.log('User dismissed the install prompt');
+							}
+							deferredPrompt = null;
+						});
+					} else {
+						// Show instructions for manual installation
+						showManualInstallInstructions();
+					}
+				});
+			}
 			if (themeToggleBtn) {
 				themeToggleBtn.addEventListener('click', function () {
 					const current = (document.documentElement.getAttribute('data-theme') === 'light') ? 'light' : 'dark';
@@ -549,6 +580,14 @@
 			render();
 			validate();
 			
+			// Debug PWA status
+			console.log('PWA Debug Info:');
+			console.log('- Service Worker supported:', 'serviceWorker' in navigator);
+			console.log('- Push Manager supported:', 'PushManager' in window);
+			console.log('- Display mode:', window.matchMedia('(display-mode: standalone)').matches);
+			console.log('- iOS standalone:', window.navigator.standalone);
+			console.log('- Manifest loaded:', !!document.querySelector('link[rel="manifest"]'));
+			
 			// Register service worker for PWA functionality
 			if ('serviceWorker' in navigator) {
 				window.addEventListener('load', () => {
@@ -563,11 +602,54 @@
 							
 							// Setup monthly donation reminders
 							setupMonthlyReminders();
+							
+							// Check if app is already installed
+							checkIfAppInstalled();
 						})
 						.catch((registrationError) => {
 							console.log('SW registration failed: ', registrationError);
 						});
 				});
+			}
+			
+			// Check if app is already installed
+			function checkIfAppInstalled() {
+				// Check if running in standalone mode (installed)
+				if (window.matchMedia('(display-mode: standalone)').matches || 
+					window.navigator.standalone === true) {
+					console.log('App is already installed');
+					return;
+				}
+				
+				// Show manual install section if PWA is supported
+				if ('serviceWorker' in navigator && 'PushManager' in window) {
+					setTimeout(() => {
+						if (installSection) {
+							installSection.style.display = 'block';
+						}
+					}, 2000); // Show after 2 seconds
+				}
+			}
+			
+			// Show manual installation instructions
+			function showManualInstallInstructions() {
+				const instructions = `
+					To install this app:
+					
+					📱 Mobile (Chrome/Edge):
+					• Tap the menu (⋮) → "Add to Home screen"
+					
+					💻 Desktop (Chrome/Edge):
+					• Click the install icon (📱) in the address bar
+					• Or press Ctrl+Shift+I → Application → Manifest → Install
+					
+					🍎 Safari (iOS):
+					• Tap Share → "Add to Home Screen"
+					
+					🔧 If no prompt appears, try refreshing the page
+				`;
+				
+				alert(instructions);
 			}
 			
 			// Monthly donation reminder functionality
@@ -657,13 +739,42 @@
 				e.preventDefault();
 				deferredPrompt = e;
 				
-				// Show install button or banner
+				// Show install button
 				showInstallPrompt();
 			});
 			
 			function showInstallPrompt() {
-				// You can add an install button here
-				console.log('App can be installed');
+				// Create and show install button
+				if (deferredPrompt) {
+					// Remove existing install button if any
+					const existingBtn = document.getElementById('installBtn');
+					if (existingBtn) existingBtn.remove();
+					
+					// Create install button
+					const installBtn = document.createElement('button');
+					installBtn.id = 'installBtn';
+					installBtn.className = 'button';
+					installBtn.innerHTML = '📱 Install App';
+					installBtn.style.marginTop = '16px';
+					installBtn.style.width = '100%';
+					
+					// Add click handler
+					installBtn.addEventListener('click', async () => {
+						if (deferredPrompt) {
+							deferredPrompt.prompt();
+							const { outcome } = await deferredPrompt.userChoice;
+							console.log(`User response to the install prompt: ${outcome}`);
+							deferredPrompt = null;
+							installBtn.remove();
+						}
+					});
+					
+					// Insert after the footer note
+					const footerNote = document.querySelector('.footer-note');
+					if (footerNote) {
+						footerNote.parentNode.insertBefore(installBtn, footerNote.nextSibling);
+					}
+				}
 			}
 			
 			// Handle app shortcuts
