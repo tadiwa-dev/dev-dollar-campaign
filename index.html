@@ -5,6 +5,17 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 	<title>Development Dollar Campaign</title>
 	<meta name="color-scheme" content="light dark" />
+	<meta name="theme-color" content="#22c55e" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+	<meta name="apple-mobile-web-app-title" content="DevDollar" />
+	<meta name="mobile-web-app-capable" content="yes" />
+	<meta name="msapplication-TileColor" content="#22c55e" />
+	<meta name="msapplication-config" content="/browserconfig.xml" />
+	<link rel="manifest" href="/manifest.json" />
+	<link rel="apple-touch-icon" href="/icon-192.png" />
+	<link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png" />
+	<link rel="icon" type="image/png" sizes="16x16" href="/icon-16.png" />
 	<style>
 		:root {
 			--bg: #0f172a;             /* slate-900 */
@@ -511,6 +522,54 @@
 			applyTheme(detectInitialTheme());
 			render();
 			validate();
+			
+			// Register service worker for PWA functionality
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', () => {
+					navigator.serviceWorker.register('/sw.js')
+						.then((registration) => {
+							console.log('SW registered: ', registration);
+							
+							// Request notification permission
+							if ('Notification' in window && Notification.permission === 'default') {
+								Notification.requestPermission();
+							}
+						})
+						.catch((registrationError) => {
+							console.log('SW registration failed: ', registrationError);
+						});
+				});
+			}
+			
+			// Handle install prompt
+			let deferredPrompt;
+			window.addEventListener('beforeinstallprompt', (e) => {
+				e.preventDefault();
+				deferredPrompt = e;
+				
+				// Show install button or banner
+				showInstallPrompt();
+			});
+			
+			function showInstallPrompt() {
+				// You can add an install button here
+				console.log('App can be installed');
+			}
+			
+			// Handle app shortcuts
+			if ('launchQueue' in window) {
+				window.launchQueue.setConsumer((launchParams) => {
+					if (launchParams.targetURL) {
+						const url = new URL(launchParams.targetURL);
+						if (url.searchParams.get('action') === 'give') {
+							// Focus on the amount input when launched via shortcut
+							setTimeout(() => {
+								amountInput.focus();
+							}, 100);
+						}
+					}
+				});
+			}
 		})();
 	</script>
 </body>
