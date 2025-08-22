@@ -48,10 +48,15 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET requests
-  if (request.method !== 'GET') {
-    return;
-  }
+  		// Skip non-GET requests
+		if (request.method !== 'GET') {
+			return;
+		}
+		
+		// Skip non-HTTP requests (like chrome-extension, data:, etc.)
+		if (!request.url.startsWith('http:') && !request.url.startsWith('https:')) {
+			return;
+		}
 
   		// Handle navigation requests
 		if (request.mode === 'navigate') {
@@ -67,39 +72,45 @@ self.addEventListener('fetch', (event) => {
 			return;
 		}
 
-  // Handle static assets
-  if (STATIC_ASSETS.includes(url.pathname)) {
-    event.respondWith(
-      caches.match(request)
-        .then((response) => {
-          return response || fetch(request);
-        })
-    );
-    return;
-  }
+  		// Handle static assets
+		if (STATIC_ASSETS.includes(url.pathname)) {
+			event.respondWith(
+				caches.match(request)
+					.then((response) => {
+						return response || fetch(request);
+					})
+					.catch(() => {
+						return fetch(request);
+					})
+			);
+			return;
+		}
 
-  // Handle other requests with network-first strategy
-  event.respondWith(
-    fetch(request)
-      .then((response) => {
-        // Clone the response before caching
-        const responseClone = response.clone();
-        
-        // Cache successful responses
-        if (response.status === 200) {
-          caches.open(DYNAMIC_CACHE)
-            .then((cache) => {
-              cache.put(request, responseClone);
-            });
-        }
-        
-        return response;
-      })
-      .catch(() => {
-        // Return cached response if network fails
-        return caches.match(request);
-      })
-  );
+  		// Handle other requests with network-first strategy
+		event.respondWith(
+			fetch(request)
+				.then((response) => {
+					// Clone the response before caching
+					const responseClone = response.clone();
+					
+					// Cache successful responses (only for http/https schemes)
+					if (response.status === 200 && (request.url.startsWith('http:') || request.url.startsWith('https:'))) {
+						caches.open(DYNAMIC_CACHE)
+							.then((cache) => {
+								cache.put(request, responseClone);
+							})
+							.catch((error) => {
+								console.log('Cache put failed:', error);
+							});
+					}
+					
+					return response;
+				})
+				.catch(() => {
+					// Return cached response if network fails
+					return caches.match(request);
+				})
+		);
 });
 
 // Background sync for offline donations
